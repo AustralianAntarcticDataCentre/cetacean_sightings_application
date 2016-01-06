@@ -1,0 +1,894 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.1" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:annotation>
+		<xsd:documentation xml:lang="en">
+			** Author:	Australian Antarctic Division - Australian Marine Mammal Centre
+			** Email: 	sightingsdata@aad.gov.au
+			** Web: 	http://www.marinemammals.gov.au/
+		</xsd:documentation>
+	</xsd:annotation>
+	
+	<xsd:element name="data">
+		<xsd:complexType>
+			<xsd:annotation>
+				<xsd:documentation xml:lang="en">
+					Attributes:
+						** AppVersion (Not required) - The version number of the application that generated the XML.
+						** AppName (Not required) - The name of the application that generated the XML.
+						** SchemaVersion (Required) - The version number of the schema that its adhering to.
+						** DateCreated (Required) - The date that the XML was generated.
+					
+						Required:
+							** xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+							** xsi:noNamespaceSchemaLocation="http://{URL}/xml_schema_v{VERSION}.xsd"
+								- {URL} points to the url location of the schema.
+								- {VERSION} is the version number of the schema that you are using.
+				</xsd:documentation>
+			</xsd:annotation>
+			<xsd:sequence>
+				<xsd:element name="ExportDetails" type="typeExportDetails" minOccurs="1" maxOccurs="1"/>
+				<xsd:element name="Observer" type="typeObserver" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element name="Survey" type="typeSurvey" minOccurs="1" maxOccurs="1"/>
+				<xsd:element name="SurveyOperation" type="typeSurveyOperation" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="SurveyLine" type="typeSurveyLine" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="ObserverEffort" type="typeObserverEffort" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element name="CetaceanSighting" type="typeCetaceanSighting" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="TimeSeries" type="typeTimeSeries" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="NonCetaceanSighting" type="typeNonCetaceanSighting" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element name="Vessel" type="typeVessel" minOccurs="1" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="AppVersion" type="xsd:string"/>
+			<xsd:attribute name="AppName" type="xsd:string"/>
+			<xsd:attribute name="SchemaVersion" type="xsd:decimal" use="required"/>
+			<xsd:attribute name="DateCreated" type="typeDate" use="required"/>
+		</xsd:complexType>
+		
+		<xsd:key name="PK_Observer">
+			<xsd:selector xpath=".//Observer"/>
+			<xsd:field xpath=".//Observer/@id"/>
+		</xsd:key>
+		<xsd:key name="PK_Survey">
+			<xsd:selector xpath=".//Survey"/>
+			<xsd:field xpath=".//Survey/@id"/>
+		</xsd:key>
+		<xsd:key name="PK_SurveyOperation">
+			<xsd:selector xpath=".//SurveyOperation"/>
+			<xsd:field xpath=".//SurveyOperation/@id"/>
+		</xsd:key>
+		<xsd:key name="PK_SurveyLine">
+			<xsd:selector xpath=".//SurveyLine"/>
+			<xsd:field xpath=".//SurveyLine/@id"/>
+		</xsd:key>
+		<xsd:key name="PK_ObserverEffort">
+			<xsd:selector xpath=".//ObserverEffort"/>
+			<xsd:field xpath=".//ObserverEffort/@id"/>
+		</xsd:key>
+		<xsd:key name="PK_Sighting">
+			<xsd:selector xpath=".//Sighting"/>
+			<xsd:field xpath=".//Sighting/@id"/>
+		</xsd:key>
+		<xsd:key name="PK_NonCetaceanSighting">
+			<xsd:selector xpath=".//NonCetaceanSighting"/>
+			<xsd:field xpath=".//NonCetaceanSighting/@id"/>
+		</xsd:key>
+		<!--
+			Not required as the Timeseries will now use the SightingID as the identifier, along with the Date / Time
+			<xsd:key name="PK_TimeSeries">
+				<xsd:selector xpath=".//TimeSeries"/>
+				<xsd:field xpath=".//TimeSeries/@id"/>
+			</xsd:key>
+		-->
+		<xsd:key name="PK_VesselID">
+			<xsd:selector xpath=".//Vessel"/>
+			<xsd:field xpath=".//Vessel/@id"/>
+		</xsd:key>
+	</xsd:element>
+	
+	<xsd:complexType name="typeExportDetails">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en"/>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="SurveyID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="Title" type="typeTitle" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="FirstName" type="typeString40" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="LastName" type="typeString40" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Email" type="typeString100" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Client" type="typeString50" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Phone" type="typeString20" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Mobile" type="typeString20" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="AddressLine1" type="typeString100" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="AddressLine2" type="typeString100" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="Country" type="typeString50" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Notes" type="typeString4000" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="typeObserver">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en"/>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ObserverID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SurveyID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ObserverFunction" type="typeObserverFunction" minOccurs="1" maxOccurs="1"/>		
+			<xsd:element name="Title" type="typeTitle" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SeismicExperience" type="typeSeismicExperience" minOccurs="1" maxOccurs="1"/>			
+			<xsd:element name="FirstName" type="typeString40" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="LastName" type="typeString40" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Employer" type="typeString100" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="EmployerEmail" type="typeString100" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="TrainingDetail" type="typeString1000" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:integer" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="typeSurvey">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en"/>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="SurveyID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SurveyType" type="typeSurveyType" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ClientName" type="typeString50" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="MMOProviderName" type="typeString50" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SeismicContractorName" type="typeString50" minOccurs="0" maxOccurs="1"/>			
+			<xsd:element name="SurveyName" type="typeString100" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Lease" type="typeString50" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ReferralReferenceNumber" type="typeString50" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="StartDate" type="typeDate" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="EndDate" type="typeDate" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SourcePowerDownDistance" type="typeNumeric" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ShutDownDistance" type="typeNumeric" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SourceVolume" type="typeNumeric" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="AirgunNumber" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SPIntervalMetres" type="typeNumeric" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SPIntervalSeconds" type="typeNumeric" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="Notes" type="typeString4000" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:integer" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="typeSurveyOperation">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+				** 'ReasonSeicmicActivityInterrupted' is only required when 'WasSeismicActivityInterrupted' is set to either 'True', 'true' or 1.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="SurveyOperationID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SurveyID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="VesselID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SurveyLineID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="StartDate" type="typeDate" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="StartTime" type="typeTime" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="StartLatitude" type="typeLatLong" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="StartLongitude" type="typeLatLong" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="StartLatitudeDecimalDegrees" type="typeDecLatLog" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="StartLongitudeDecimalDegrees" type="typeDecLatLog" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="OnOffLease" type="typeOnOffLease" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="VesselActivity" type="typeVesselActivity" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SourceStatus" type="typeSourceStatus" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="WasSeismicActivityInterrupted" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ReasonSeicmicActivityInterrupted" type="typeReasonSeismicActivityInterrupted" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="EndDate" type="typeDate" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="EndTime" type="typeTime" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="EndLatitude" type="typeLatLong" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="EndLongitude" type="typeLatLong" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="EndLatitudeDecimalDegrees" type="typeDecLatLog" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="EndLongitudeDecimalDegrees" type="typeDecLatLog" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="Notes" type="typeString1000" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:integer" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="typeSurveyLine">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en"/>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="SurveyLineID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SurveyID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="Line" type="typeString50" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:integer" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="typeObserverEffort">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+				** 'ReasonOffEffort' required if 'EffortStatus' is 'Off effort’.
+				** 'ReasonObservationHampered' is only required when 'WasObservationHampered' is set to either 'True', 'true' or 1.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="ObserverEffortID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SurveyID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ObserverID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>			
+			<xsd:element name="VesselID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="StartDate" type="typeDate" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="StartTime" type="typeTime" minOccurs="1" maxOccurs="1"/>						
+			<xsd:element name="OnOffLease" type="typeOnOffLease" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="EffortStatus" type="typeEffortStatus" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ReasonOffEffort" type="typeReasonOffEffort" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="WasObservationHampered" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ReasonObservationHampered" type="typeReasonObservationHampered" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="WeatherType" type="typeWeatherType" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="CloudCover" type="typeCloudCover" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Visibility" type="typeVisibility" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Glare" type="typeGlare" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="BeaufortSeaState" type="typeBeaufortSeaState" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="WindDirection" type="typeWindDirection" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="WindSpeed" type="typeWindSpeed" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SwellDirection" type="typeSwellDirection" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SwellHeight" type="typeSwellHeight" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="EndDate" type="typeDate" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="EndTime" type="typeTime" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Notes" type="typeString1000" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:integer" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="typeCetaceanSighting">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="SightingID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SurveyID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="VesselID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SurveyLineID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="OnOffLease" type="typeOnOffLease" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SpeciesCategory" type="typeCetaceanSpeciesCategory" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SpeciesName" type="typeCeteceanSpecies" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ConfidenceLevel" type="typeConfidenceLevel" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ObserverID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="InitialObservationMethod" type="typeInitialObservationMethod" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SightingCue" type="typeSightingCue" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Mitigation" type="typeMitigation" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="TotalCountCertainty" type="typeTotalNumberCertainty" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="WeatherType" type="typeWeatherType" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="CloudCover" type="typeCloudCover" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Visibility" type="typeVisibility" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Glare" type="typeGlare" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="BeaufortSeaState" type="typeBeaufortSeaState" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="WindDirection" type="typeWindDirection" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="WindSpeed" type="typeWindSpeed" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SwellDirection" type="typeSwellDirection" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SwellHeight" type="typeSwellHeight" minOccurs="1" maxOccurs="1"/>						
+			<xsd:element name="ObservationDate" type="typeDate" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SightingNumber" type="typeString30" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="TotalCountNumber" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="AdultCount" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="CalfCount" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ObserverHeightAboveWater" type="typeNumeric" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="WaterDepth" type="xsd:decimal" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="Notes" type="typeString1000" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:integer" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="typeTimeSeries">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en"/>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="TimeSeriesID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SightingID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ObservationTime" type="typeTime" minOccurs="1" maxOccurs="1"/>			
+			<xsd:element name="DistanceToAnimal" type="typeNumeric" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="BearingToAnimal" type="typeNumeric" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="AnimalBehaviour" type="typeAnimalBehaviour" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Latitude" type="typeLatLong" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="LatitudeDecimalDegrees" type="typeDecLatLog" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="Longitude" type="typeLatLong" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="LongitudeDecimalDegrees" type="typeDecLatLog" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ObserverDistanceToSource" type="typeNumeric" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="ObserverBearingToSource" type="typeNumeric" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="DistanceAnimalToSource" type="typeNumeric" minOccurs="0" maxOccurs="1"/>	
+			<xsd:element name="DistanceCalculationMethod" type="typeDistanceCalculationMethod" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="VesselActivity" type="typeVesselActivity" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SourceStatus" type="typeSourceStatus" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="typeNonCetaceanSighting">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+				** 	Any species can be entered into 'SpeciesName', a list has been provided in the 
+					SimpleType 'typeNonCetaceanSpecies' for reference only.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="NonCetaceanSightingID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SurveyID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="VesselID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SurveyLineID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="OnOffLease" type="typeOnOffLease" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SpeciesCategory" type="typeNonCetaceanSpeciesCategory" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SpeciesCommonName" type="typeString50" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SpeciesScientificName" type="typeString50" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ConfidenceLevel" type="typeConfidenceLevel" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ObserverID" type="xsd:integer" minOccurs="1" maxOccurs="1"/>			
+			<xsd:element name="InitialObservationMethod" type="typeInitialObservationMethod" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Mitigation" type="typeMitigation" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ObservationDate" type="typeDate" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ObservationTime" type="typeTime" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Latitude" type="typeLatLong" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="LatitudeDecimalDegrees" type="typeDecLatLog" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="LongitudeDecimalDegrees" type="typeDecLatLog" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="Longitude" type="typeLatLong" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="SightingNumber" type="typeString30" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="TotalCountNumber" type="xsd:integer" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ObserverHeightAboveWater" type="typeNumeric" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Notes" type="typeString1000" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:integer" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="typeVessel">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en"/>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="VesselID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="SurveyID" type="xsd:integer" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="VesselType" type="typeVesselType" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="VesselName" type="typeString50" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:integer" use="required"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="typeLatLong">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en"/>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="Mode" type="typeMode" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Value" type="typeString30" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Hemisphere" type="typeHemisphere" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="typeAnimalBehaviour">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Bow ride"/>
+			<xsd:enumeration value="Breaching"/>
+			<xsd:enumeration value="Dive"/>
+			<xsd:enumeration value="Feeding"/>
+			<xsd:enumeration value="Milling"/>
+			<xsd:enumeration value="Resting at surface"/>
+			<xsd:enumeration value="Spy hopping"/>
+			<xsd:enumeration value="Swimming"/>			
+			<xsd:enumeration value="Tail/pectoral slapping"/>
+			<xsd:enumeration value="Other - enter in notes"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeBeaufortSeaState">
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="0"/>
+			<xsd:maxInclusive value="9"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeCeteceanSpecies">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Unidentified cetacean"/>
+			<xsd:enumeration value="Unidentified small cetacean"/>
+			<xsd:enumeration value="Unidentified large cetacean"/>
+			<xsd:enumeration value="Unidentified baleen whale"/>
+			<xsd:enumeration value="Unidentified Bryde's/Fin/Sei type"/>
+			<xsd:enumeration value="Balaenoptera musculus"/>
+			<xsd:enumeration value="Blue whale"/>
+			<xsd:enumeration value="Balaenoptera brydei"/>
+			<xsd:enumeration value="Bryde's whale"/>
+			<xsd:enumeration value="Balaenoptera physalus"/>
+			<xsd:enumeration value="Fin whale"/>
+			<xsd:enumeration value="Megaptera novaeangliae"/>
+			<xsd:enumeration value="Humpback whale"/>
+			<xsd:enumeration value="Balaenoptera bonaerensis"/>
+			<xsd:enumeration value="Minke whale - Antarctic"/>
+			<xsd:enumeration value="Balaenoptera acutorostrata"/>
+			<xsd:enumeration value="Minke whale - Dwarf"/>
+			<xsd:enumeration value="Caperea marginata"/>
+			<xsd:enumeration value="Pygmy right whale"/>
+			<xsd:enumeration value="Balaenoptera borealis"/>
+			<xsd:enumeration value="Sei whale"/>
+			<xsd:enumeration value="Eubalaena australis"/>
+			<xsd:enumeration value="Southern right whale"/>
+			<xsd:enumeration value="Physeter macrocephalus"/>
+			<xsd:enumeration value="Sperm whale"/>
+			<xsd:enumeration value="Unidentified Kogia"/>
+			<xsd:enumeration value="Kogia simus"/>
+			<xsd:enumeration value="Dwarf sperm whale"/>
+			<xsd:enumeration value="Kogia breviceps"/>
+			<xsd:enumeration value="Pygmy sperm whale"/>
+			<xsd:enumeration value="Unidentified beaked whale"/>
+			<xsd:enumeration value="Mesoplodon bowdoini"/>
+			<xsd:enumeration value="Andrew's beaked whale"/>
+			<xsd:enumeration value="Berardius arnuxii"/>
+			<xsd:enumeration value="Arnoux's beaked whale"/>
+			<xsd:enumeration value="Mesoplodon densirostris"/>
+			<xsd:enumeration value="Blainville's beaked whale"/>
+			<xsd:enumeration value="Ziphius cavirostris"/>
+			<xsd:enumeration value="Cuvier's beaked whale"/>
+			<xsd:enumeration value="Mesoplodon ginkgodens"/>
+			<xsd:enumeration value="Ginkgo-toothed beaked whale"/>
+			<xsd:enumeration value="Mesoplodon grayi"/>
+			<xsd:enumeration value="Gray's beaked whale"/>
+			<xsd:enumeration value="Mesoplodon hectori"/>
+			<xsd:enumeration value="Hector's beaked whale"/>
+			<xsd:enumeration value="Indopacetus pacificus"/>
+			<xsd:enumeration value="Longman's beaked whale"/>
+			<xsd:enumeration value="Mesoplodon peruvianus"/>
+			<xsd:enumeration value="Pygmy beaked whale"/>
+			<xsd:enumeration value="Tasmacetus shepherdi"/>
+			<xsd:enumeration value="Shepherd's beaked whale"/>
+			<xsd:enumeration value="Hyperoodon planifrons"/>
+			<xsd:enumeration value="Southern bottlenose whale"/>
+			<xsd:enumeration value="Mesoplodon layardii"/>
+			<xsd:enumeration value="Strap-toothed beaked whale"/>
+			<xsd:enumeration value="Mesoplodon mirus"/>
+			<xsd:enumeration value="True's beaked whale"/>
+			<xsd:enumeration value="Unidentified Delphinid 'whale'"/>
+			<xsd:enumeration value="Unidentified pilot whale"/>
+			<xsd:enumeration value="Unidentified Melon-headed/Pygmy killer type"/>
+			<xsd:enumeration value="Pseudorca crassidens"/>
+			<xsd:enumeration value="False killer whale"/>
+			<xsd:enumeration value="Orcinus orca"/>
+			<xsd:enumeration value="Killer whale"/>
+			<xsd:enumeration value="Peponocephala electra"/>
+			<xsd:enumeration value="Melon-headed whale"/>
+			<xsd:enumeration value="Globicephala macrorhynchus"/>
+			<xsd:enumeration value="Pilot whale - Short-finned"/>
+			<xsd:enumeration value="Globicephala melas"/>
+			<xsd:enumeration value="Pilot whale - Long-finned"/>
+			<xsd:enumeration value="Feresa attenuata"/>
+			<xsd:enumeration value="Pygmy killer whale"/>
+			<xsd:enumeration value="Unidentified dolphin"/>
+			<xsd:enumeration value="Orcaella heinsohni"/>
+			<xsd:enumeration value="Australian snubfin dolphin"/>
+			<xsd:enumeration value="Tursiops truncatus"/>
+			<xsd:enumeration value="Bottlenose dolphin - Common"/>
+			<xsd:enumeration value="Tursiops aduncus"/>
+			<xsd:enumeration value="Bottlenose dolphin - Indo-Pacific"/>
+			<xsd:enumeration value="Delphinus capensis"/>
+			<xsd:enumeration value="Common dolphin - Long-beaked"/>
+			<xsd:enumeration value="Delphinus delphis"/>
+			<xsd:enumeration value="Common dolphin - Short-beaked"/>
+			<xsd:enumeration value="Lagenorhynchus obscurus"/>
+			<xsd:enumeration value="Dusky dolphin"/>
+			<xsd:enumeration value="Neophocaena phocaenoides"/>
+			<xsd:enumeration value="Finless porpoise"/>
+			<xsd:enumeration value="Lagenodelphis hosei	Fraser's dolphin"/>
+			<xsd:enumeration value="Cephalorhynchus hectori"/>
+			<xsd:enumeration value="Hector's dolphin"/>
+			<xsd:enumeration value="Lagenorhynchus cruciger"/>
+			<xsd:enumeration value="Hourglass dolphin"/>
+			<xsd:enumeration value="Sousa chinensis"/>
+			<xsd:enumeration value="Indo-Pacific humpbacked dolphin"/>
+			<xsd:enumeration value="Orcaella brevirostris"/>
+			<xsd:enumeration value="Irrawaddy dolphin"/>
+			<xsd:enumeration value="Stenella attenuata"/>
+			<xsd:enumeration value="Pantropical spotted dolphin"/>
+			<xsd:enumeration value="Grampus griseus"/>
+			<xsd:enumeration value="Risso's dolphin"/>
+			<xsd:enumeration value="Steno bredanensis"/>
+			<xsd:enumeration value="Rough-toothed dolphin"/>
+			<xsd:enumeration value="Stenella longirostris"/>
+			<xsd:enumeration value="Spinner dolphin"/>
+			<xsd:enumeration value="Stenella longirostris roseiventris"/>
+			<xsd:enumeration value="Spinner dolphin - dwarf"/>
+			<xsd:enumeration value="Stenella coeruleoalba"/>
+			<xsd:enumeration value="Striped dolphin"/>
+			<xsd:enumeration value="Lissodelphis peronii"/>
+			<xsd:enumeration value="Southern right whale dolphin"/>
+			<xsd:enumeration value="Phocoena dioptricia"/>
+			<xsd:enumeration value="Spectacled porpoise"/>
+			<xsd:enumeration value="Fraser's dolphin"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeCetaceanSpeciesCategory">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Unidentified cetacean"/>
+			<xsd:enumeration value="Unidentified large cetacean"/>
+			<xsd:enumeration value="Unidentified small cetacean"/>
+			<xsd:enumeration value="Baleen 'whale'"/>
+			<xsd:enumeration value="Sperm whale (sp)"/>
+			<xsd:enumeration value="Delphinid 'whale'"/>
+			<xsd:enumeration value="Dolphin or porpoise"/>
+			<xsd:enumeration value="Beaked whale"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeCloudCover">
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="0"/>
+			<xsd:maxInclusive value="9"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeConfidenceLevel"> 
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Certain"/>
+			<xsd:enumeration value="Probable"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeDistanceCalculationMethod">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Digital camera or video"/>
+			<xsd:enumeration value="Eye/estimate"/>
+			<xsd:enumeration value="Laser range finder"/>
+			<xsd:enumeration value="Range finding sticks"/>
+			<xsd:enumeration value="Reticule binoculars"/>
+			<xsd:enumeration value="Sextant"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeEffortStatus">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Off effort"/>
+			<xsd:enumeration value="Routine observation"/>
+			<xsd:enumeration value="Pre-shooting observation"/>
+			<xsd:enumeration value="Soft start observation"/>
+			<xsd:enumeration value="Full power observation"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeGlare">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="0 - no glare"/>
+			<xsd:enumeration value="1 - low glare"/>
+			<xsd:enumeration value="2 - medium glare"/>
+			<xsd:enumeration value="3 - bad glare"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeHemisphere"> 
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="SOUTH"/>
+			<xsd:enumeration value="NORTH"/>
+			<xsd:enumeration value="EAST"/>
+			<xsd:enumeration value="WEST "/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeMitigation">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No action"/>
+			<xsd:enumeration value="Delayed soft start"/>
+			<xsd:enumeration value="Power down"/>
+			<xsd:enumeration value="Shut down"/>
+			
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeMode"> 
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="DECIMAL_DEGREES"/>
+			<xsd:enumeration value="DEGREES_DECIMAL_MINUTES"/>
+			<xsd:enumeration value="DEGREES_MINUTES_SECONDS"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeNonCetaceanSpeciesCategory">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Dugong"/>
+			<xsd:enumeration value="Filter feeding sharks"/>
+			<xsd:enumeration value="Other sharks"/>
+			<xsd:enumeration value="Sea turtles"/>
+			<xsd:enumeration value="Seals/Sea lions"/>
+			<xsd:enumeration value="Other marine fauna"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeNonCetaceanSpecies">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Unidentified sea turtle"/>
+			<xsd:enumeration value="Dermochelys coriacea"/>
+			<xsd:enumeration value="Leatherback sea turtle"/>
+			<xsd:enumeration value="Caretta caretta"/>
+			<xsd:enumeration value="Loggerhead sea turtle"/>
+			<xsd:enumeration value="Eretmochelys imbricata"/>
+			<xsd:enumeration value="Hawksbill sea turtle"/>
+			<xsd:enumeration value="Chelonia mydas"/>
+			<xsd:enumeration value="Green sea turtle"/>
+			<xsd:enumeration value="Natator depressus"/>
+			<xsd:enumeration value="Flatback sea turtle"/>
+			<xsd:enumeration value="Lepidochelys olivacea"/>
+			<xsd:enumeration value="Olive Ridley sea turtle"/>
+			<xsd:enumeration value="Dugong dugon"/>
+			<xsd:enumeration value="Dugong"/>
+			<xsd:enumeration value="Rhincodon typus"/>
+			<xsd:enumeration value="Whale shark"/>
+			<xsd:enumeration value="Cetorhinus maximus"/>
+			<xsd:enumeration value="Basking shark"/>
+			<xsd:enumeration value="Carcharodon carcharias"/>
+			<xsd:enumeration value="Great white shark"/>
+			<xsd:enumeration value="Carcharias taurus"/>
+			<xsd:enumeration value="Grey nurse shark (West coast population)"/>
+			<xsd:enumeration value="Carcharias taurus"/>
+			<xsd:enumeration value="Grey nurse shark (East coast population)"/>
+			<xsd:enumeration value="Unidentified seal"/>
+			<xsd:enumeration value="Unidentified sea lion"/>
+			<xsd:enumeration value="Arctocephalus tropicalis"/>
+			<xsd:enumeration value="Subantarctic fur seal"/>
+			<xsd:enumeration value="Neophoca cinerea"/>
+			<xsd:enumeration value="Australian sea lion"/>
+			<xsd:enumeration value="Mirounga leonina"/>
+			<xsd:enumeration value="Southern elephant seal"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeInitialObservationMethod">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Binoculars"/>
+			<xsd:enumeration value="Eye"/>
+			<xsd:enumeration value="Other - enter in notes"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeObserverFunction">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Dedicated observer"/>
+			<xsd:enumeration value="Marine crew"/>
+			<xsd:enumeration value="Seismic crew"/>
+			<xsd:enumeration value="Other"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeOnOffLease">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="On lease"/>
+			<xsd:enumeration value="Off lease"/>
+			<xsd:enumeration value="In transit"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeReasonSeismicActivityInterrupted">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Delay - cetacean"/>
+			<xsd:enumeration value="Powered down - cetacean"/>			
+			<xsd:enumeration value="Shutdown - cetacean"/>
+			<xsd:enumeration value="Fishing activity"/>
+			<xsd:enumeration value="Mechanical/software issue"/>
+			<xsd:enumeration value="Missfires"/>
+			<xsd:enumeration value="Vessel operations"/>
+			<xsd:enumeration value="Weather"/>
+			<xsd:enumeration value="Other - enter in notes"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeReasonObservationHampered">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Bad glare"/>
+			<xsd:enumeration value="Dark"/>
+			<xsd:enumeration value="High seastate"/>
+			<xsd:enumeration value="High wind"/>
+			<xsd:enumeration value="Poor visibility"/>			
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeReasonOffEffort">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Break"/>
+			<xsd:enumeration value="End of line"/>
+			<xsd:enumeration value="End of shift"/>
+			<xsd:enumeration value="End of survey"/>
+			<xsd:enumeration value="Night fall"/>
+			<xsd:enumeration value="Poor visibility"/>
+			<xsd:enumeration value="Other - enter in notes"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeSeismicExperience">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="None"/>
+			<xsd:enumeration value="Less than 1 week"/>
+			<xsd:enumeration value="1 - 5 weeks"/>
+			<xsd:enumeration value="5 - 20 weeks"/>
+			<xsd:enumeration value="20 - 48 weeks"/>
+			<xsd:enumeration value="More than 1 year"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeSightingCue">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Blow"/>
+			<xsd:enumeration value="Body"/>
+			<xsd:enumeration value="Breach"/>
+			<xsd:enumeration value="Dorsal fin"/>			
+			<xsd:enumeration value="Surface activity"/>
+			<xsd:enumeration value="Other - enter in notes"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeSurveyType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="2D"/>
+			<xsd:enumeration value="3D"/>
+			<xsd:enumeration value="4D"/>
+			<xsd:enumeration value="4C"/>
+			<xsd:enumeration value="MAZ"/>
+			<xsd:enumeration value="OBC"/>
+			<xsd:enumeration value="WAZ"/>
+			<xsd:enumeration value="VSP"/>
+			<xsd:enumeration value="Complex - enter in notes"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeSourceStatus">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Testing guns"/>
+			<xsd:enumeration value="Soft start"/>
+			<xsd:enumeration value="Powered down to minimum"/>
+			<xsd:enumeration value="Full power"/>
+			<xsd:enumeration value="Shut down"/>	
+			<xsd:enumeration value="No source"/>			
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeSwellDirection">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="N - 0"/>
+			<xsd:enumeration value="NE - 45"/>
+			<xsd:enumeration value="E - 90"/>
+			<xsd:enumeration value="SE - 135"/>
+			<xsd:enumeration value="S - 180"/>
+			<xsd:enumeration value="SW - 225"/>
+			<xsd:enumeration value="W - 270"/>
+			<xsd:enumeration value="NW - 315"/>
+			<xsd:enumeration value="Confused"/>
+			<xsd:enumeration value="More than 1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeSwellHeight">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="0 - 1 m"/>
+			<xsd:enumeration value="1 - 2 m"/>
+			<xsd:enumeration value="2 - 4 m"/>
+			<xsd:enumeration value="Greater than 4 m"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeTitle">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Dr"/>
+			<xsd:enumeration value="Mr"/>
+			<xsd:enumeration value="Mrs"/>
+			<xsd:enumeration value="Ms"/>
+			<xsd:enumeration value="Prof"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeTotalNumberCertainty">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Approximate"/>
+			<xsd:enumeration value="Definitive"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeVesselActivity">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Off line"/>
+			<xsd:enumeration value="Run in to line"/>
+			<xsd:enumeration value="On line - acquiring data"/>
+			<xsd:enumeration value="On line - not acquiring data"/>
+			<xsd:enumeration value="Run out from line"/>
+			<xsd:enumeration value="Line change/turn"/>
+			<xsd:enumeration value="Gear deployment/retrieval"/>
+			<xsd:enumeration value="Other - enter in notes"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeVesselType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Source"/>
+			<xsd:enumeration value="Streamer"/>
+			<xsd:enumeration value="Support"/>
+			<xsd:enumeration value="Dedicated MMO scout vessel"/>
+			<xsd:enumeration value="Dedicated PAM vessel"/>
+			<xsd:enumeration value="Other - enter in notes"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeVisibility">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Less than 1 km"/>
+			<xsd:enumeration value="1 - 2 km"/>
+			<xsd:enumeration value="2 - 3 km"/>
+			<xsd:enumeration value="3 - 5 km"/>
+			<xsd:enumeration value="Greater than 5 km"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeWeatherType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No phenomena - except clouds"/>
+			<xsd:enumeration value="Haze/Smoke"/>
+			<xsd:enumeration value="Mist/Shallow fog - visibility more than 1 km"/>
+			<xsd:enumeration value="Fog - visibility less than 1 km"/>
+			<xsd:enumeration value="Drizzle - occasional - not falling as showers"/>
+			<xsd:enumeration value="Rain - continuous showers"/>
+			<xsd:enumeration value="Squalls"/>
+			<xsd:enumeration value="Heavy rain/storm"/>
+			<xsd:enumeration value="Other - enter in notes"/>	 
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeWindDirection">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="N - 0"/>
+			<xsd:enumeration value="NE - 45"/>
+			<xsd:enumeration value="E - 90"/>
+			<xsd:enumeration value="SE - 135"/>
+			<xsd:enumeration value="S - 180"/>
+			<xsd:enumeration value="SW - 225"/>
+			<xsd:enumeration value="W - 270"/>
+			<xsd:enumeration value="NW - 315"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeWindSpeed">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="0 - 10 kts"/>
+			<xsd:enumeration value="10 - 20 kts"/>
+			<xsd:enumeration value="20 - 30 kts"/>
+			<xsd:enumeration value="30 - 50 kts"/>
+			<xsd:enumeration value="Greater than 50 kts"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="typeDate">
+		<xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                ** Date format: dd/mm/yyyy
+					** Valid: 01/12/2009
+					** Invalid: 1/1/2009, 12/JAN/2009
+            </xsd:documentation>
+        </xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeTime">
+		<xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                ** Time format: hh:mm UTC
+					** Valid: 13:34
+					** Invalid: 01:12 AM
+            </xsd:documentation>
+        </xsd:annotation>
+		<xsd:restriction base="xsd:string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeString10">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeString20">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeString30">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeString40">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="40"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeString50">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="50"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeString100">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="100"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeString1000">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="1000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeString4000">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="4000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeNumeric">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:fractionDigits value="3"/>
+			<xsd:totalDigits value="10"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="typeDecLatLog">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:fractionDigits value="10"/>
+			<xsd:totalDigits value="13"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>
